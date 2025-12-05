@@ -34,27 +34,27 @@ ORDER BY sc.start_time, u.name;  -- Diurutkan per jadwal, lalu nama siswa
 -- Menghitung kehadiran setiap minggu per siswa
 SELECT 
     u.name AS student_name,
-    YEAR(sc.start_time) AS year,     -- Tahun per jadwal
-    WEEK(sc.start_time) AS week,     -- Minggu ke-
-    SUM(a.status = 'present') AS hadir,
-    SUM(a.status = 'absent') AS absen
+    EXTRACT(YEAR FROM sc.start_time) AS year,     -- Tahun per jadwal
+    EXTRACT(WEEK FROM sc.start_time) AS week,     -- Minggu ke-
+    SUM(CASE WHEN a.status = 'present' THEN 1 ELSE 0 END) AS hadir,
+    SUM(CASE WHEN a.status = 'absent' THEN 1 ELSE 0 END) AS absen
 FROM attendances a
 JOIN schedules sc ON sc.id = a.schedule_id
 JOIN users u ON u.id = a.user_id
-GROUP BY u.id, YEAR(sc.start_time), WEEK(sc.start_time);
+GROUP BY u.id, year, week;
 
 
 -- Menghitung kehadiran setiap bulan per siswa
 SELECT 
     u.name AS student_name,
-    YEAR(sc.start_time) AS year,     
-    MONTH(sc.start_time) AS month,   -- Bulan
-    SUM(a.status = 'present') AS hadir,
-    SUM(a.status = 'absent') AS absen
+    EXTRACT(YEAR FROM sc.start_time) AS year,     
+    EXTRACT(MONTH FROM sc.start_time) AS month,   -- Bulan
+    SUM(CASE WHEN a.status = 'present' THEN 1 ELSE 0 END) AS hadir,
+    SUM(CASE WHEN a.status = 'absent' THEN 1 ELSE 0 END) AS absen
 FROM attendances a
 JOIN schedules sc ON sc.id = a.schedule_id
 JOIN users u ON u.id = a.user_id
-GROUP BY u.id, YEAR(sc.start_time), MONTH(sc.start_time);
+GROUP BY u.id, year, month;
 
 
 -- Materi yang dipetakan ke kelas melalui table material_classrooms
